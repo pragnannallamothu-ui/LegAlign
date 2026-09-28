@@ -14,14 +14,24 @@ def cosine_similarity(vec_a, vec_b):
     return dot_product / (magnitude_a * magnitude_b)
 
 def pelvic_tilt_degrees(left_hip, right_hip):
-    pelvis_vector = right_hip - left_hip
-    horizontal = np.array([1.0, 0.0])
+    """
+    Calculates the true deviation of the pelvis line from the horizontal axis.
+    Returns an angle in degrees where 0° means a perfectly level pelvis.
+    """
+    dy = right_hip[1] - left_hip[1]
+    dx = right_hip[0] - left_hip[0]
     
-    cos_val = cosine_similarity(pelvis_vector, horizontal)
-    cos_val = np.clip(cos_val, -1.0, 1.0)
-    angle = np.degrees(np.arccos(cos_val))
+    # Calculate angle using arctan2 (-180 to 180 degrees)
+    angle_rad = np.arctan2(dy, dx)
+    angle_deg = np.degrees(angle_rad)
     
-    return abs(angle)
+    # Normalize the angle to map any direction vector back to a 0-90 degree deviation scale
+    if angle_deg > 90:
+        angle_deg -= 180
+    elif angle_deg < -90:
+        angle_deg += 180
+        
+    return abs(angle_deg)
 
 # === 1. LOAD IMAGE & CHECK ===
 image_path = 'test_person.jpg'
@@ -45,7 +55,7 @@ if not results.pose_landmarks:
 
 lm = results.pose_landmarks.landmark
 
-# Get pixel coordinates
+# Get precise pixel coordinates
 def px(idx):
     return np.array([lm[idx].x * w, lm[idx].y * h])
 
@@ -61,12 +71,13 @@ leg_cosine = cosine_similarity(left_leg, right_leg)
 tilt = pelvic_tilt_degrees(left_hip, right_hip)
 
 print("=" * 50)
-print("       LegAlign Core Metrics")
+print("       LegAlign Core Metrics (Refined)")
 print("=" * 50)
 print(f"  Leg Cosine Similarity: {leg_cosine:.6f}")
 print(f"  Pelvic Tilt:           {tilt:.2f} degrees")
 print()
 
+# Leg alignment evaluation
 if leg_cosine >= 0.985:
     print("  → Legs appear well-aligned (Normal)")
 elif leg_cosine >= 0.970:
@@ -74,12 +85,13 @@ elif leg_cosine >= 0.970:
 else:
     print("  → Significant asymmetry (Recommend evaluation)")
 
-if tilt < 1.5:
-    print(f"  → Pelvis appears level (tilt = {tilt:.1f}°)")
-elif tilt < 3.0:
-    print(f"  → Mild pelvic tilt detected ({tilt:.1f}°)")
+# Pelvic tilt evaluation with a realistic normal buffer (< 3.0°)
+if tilt < 3.0:
+    print(f"  → Pelvis appears level (tilt = {tilt:.2f}° — Normal)")
+elif tilt < 5.0:
+    print(f"  → Mild pelvic tilt detected ({tilt:.2f}° — Monitor)")
 else:
-    print(f"  → Significant pelvic tilt ({tilt:.1f}° — LLD suspected)")
+    print(f"  → Significant pelvic tilt ({tilt:.2f}° — LLD suspected)")
 
 # === 4. DRAW & SAVE VISUALIZATION ===
 annotated = image.copy()
