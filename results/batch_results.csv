@@ -1,0 +1,4 @@
+filename,subject_id,condition_cm,view,rep,leg_cosine,pelvic_tilt_deg,spine_deviation_deg,leg_diff_px,legalign_score,risk_level
+test_person.jpg,test,person,,,0.995640,177.91,1.29,1.7,40.6,Moderate
+week1_output_skeleton.jpg,week1,output,skeleton,,0.998199,6.26,1.91,12.2,35.0,Mild
+week2_vectors.jpg,week2,vectors,,,0.993537,178.50,2.51,0.1,44.0,Moderate

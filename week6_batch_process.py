@@ -72,4 +72,4 @@ def batch_analyze(image_folder, output_csv='results/batch_results.csv'):
     return results_data
 
 if __name__ == '__main__':
-    batch_analyze('images/collected/')
+    batch_analyze('./')
