@@ -82,9 +82,9 @@ if __name__ == '__main__':
     print("\n=== Multi-View Analysis ===")
     views = {
         'front': 'test_person.jpg',
-        #'back':  'images/subject01_back.jpg',
-        #'left':  'images/subject01_left.jpg',
-        #'right': 'images/subject01_right.jpg',
+        'back':  'images/subject01_back.jpg',
+        'left':  'images/subject01_left.jpg',
+        'right': 'images/subject01_right.jpg',
     }
     # Uncomment when you have real photos:
     analyze_multiple_views(views)

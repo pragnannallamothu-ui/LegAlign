@@ -1,7 +1,15 @@
 from pathlib import Path
 
+import sys
 import cv2
 import mediapipe as mp
+
+print("Python:", sys.executable)
+print("MediaPipe version:", mp.__version__)
+print("MediaPipe location:", mp.__file__)
+print("Has solutions:", hasattr(mp, "solutions"))
+
+
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
